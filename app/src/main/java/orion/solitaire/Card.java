@@ -1,7 +1,5 @@
 package orion.solitaire;
 
-import android.graphics.drawable.Drawable;
-
 public class Card {
 	private int value;
 	private int imgId;

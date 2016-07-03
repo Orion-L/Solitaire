@@ -1,7 +1,6 @@
 package orion.solitaire;
 
 import android.content.Context;
-import android.text.Layout;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -9,7 +8,7 @@ import android.widget.RelativeLayout;
 import java.util.LinkedList;
 
 public class Pile {
-    private int xPos, yPos, width, height, baseId;
+    private int xPos, yPos, width, height;
     private Context c;
     private RelativeLayout l;
     private RelativeLayout.LayoutParams lp;
@@ -23,7 +22,6 @@ public class Pile {
         this.yPos = yPos;
         this.width = width;
         this.height = height;
-        this.baseId = baseId;
 
         pile = new LinkedList<>();
         images = new LinkedList<>();
