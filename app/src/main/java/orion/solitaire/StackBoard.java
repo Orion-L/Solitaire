@@ -1,16 +1,24 @@
 package orion.solitaire;
 
+import android.content.Context;
+import android.widget.RelativeLayout;
+
 public class StackBoard {
 	private Pile[] stacks;
 
-	public StackBoard(Deck d) {
-		stacks = new Pile[7];
+	public StackBoard(Deck d, Context c, RelativeLayout l, int xPos, int yPos, int width, int height, int baseId) {
+		stacks = new Pile[Constants.numBoardStacks];
+        int x = xPos;
+		Card card;
 
 		for (int i = 0; i < stacks.length; i++) {
-			stacks[i] = new Pile();
+            if (i > 0) x += width + Constants.cardSpacing;
+			stacks[i] = new Pile(c, l, x, yPos, width, height, baseId);
 
 			for (int j = 0; j <= i; j++) {
-				stacks[i].addCard(d.removeDeck());
+                card = d.removeDeck();
+                if (j == i) card.setFace(true);
+				stacks[i].addCard(card);
 			}
 		}
 	}

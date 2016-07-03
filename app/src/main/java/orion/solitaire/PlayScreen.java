@@ -1,23 +1,16 @@
 package orion.solitaire;
 
-import android.content.Context;
 import android.content.res.Configuration;
-import android.media.Image;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.StackView;
 
 public class PlayScreen extends AppCompatActivity {
-    private static final int numBoardStack = 7;
-    private static final int numGoalStack = 4;
+    private Deck deck;
+    private GoalStacks goalStacks;
+    private StackBoard boardStacks;
 
-    private Deck d;
-    private ImageView[] goalStack;
-    private ImageView[] boardStack;
     private ImageView deckStack;
 
     @Override
@@ -25,39 +18,28 @@ public class PlayScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play_screen);
 
-        //StackView stackView = (StackView) findViewById(R.id.stackView);
-        //stackView.setAdapter(new ImageAdapter(this));
+        int numStacks = Constants.numBoardStacks;
+        int numGoals = Constants.numGoals;
+        int spacing = Constants.cardSpacing;
+
+        RelativeLayout layout = (RelativeLayout) findViewById(R.id.playLayout);
+        RelativeLayout.LayoutParams size;
 
         Configuration config = getResources().getConfiguration();
         float density = getResources().getDisplayMetrics().density;
-        float screenWidth = (config.screenWidthDp - (getResources().getDimension(R.dimen.activity_horizontal_margin) / 2)) * density;
-        double pxWidth = (screenWidth / numBoardStack) - (numBoardStack - 1) + 0.5;
+        float screenWidth = (config.screenWidthDp) * density  - (getResources().getDimension(R.dimen.activity_horizontal_margin) * 2);
+        System.out.println(R.dimen.activity_horizontal_margin);
+        double pxWidth = ((screenWidth - (numStacks - 1) * spacing) / numStacks) + 0.5;
         double pxHeight = pxWidth * 1.445 + 0.5;
         int cardWidth = (int) pxWidth;
         int cardHeight = (int) pxHeight;
 
-        RelativeLayout.LayoutParams size;
+        goalStacks = new GoalStacks(this, layout, (int) (screenWidth - (numGoals * pxWidth + (numGoals - 1) * spacing)), 0,
+                cardWidth, cardHeight, getResources().getIdentifier("empty2", "drawable", getPackageName()));
 
-        goalStack = new ImageView[numGoalStack];
-        int id;
-
-        for (int i = 0; i < goalStack.length; i++) {
-            id = getResources().getIdentifier("goalView" + (i + 1), "id", getPackageName());
-            goalStack[i] = (ImageView) findViewById(id);
-            size = (RelativeLayout.LayoutParams) goalStack[i].getLayoutParams();
-            size.width = cardWidth;
-            size.height = cardHeight;
-        }
-
-        boardStack = new ImageView[numBoardStack];
-
-        for (int i = 0; i < boardStack.length; i++) {
-            id = getResources().getIdentifier("boardView" + (i + 1), "id", getPackageName());
-            boardStack[i] = (ImageView) findViewById(id);
-            size = (RelativeLayout.LayoutParams) boardStack[i].getLayoutParams();
-            size.width = cardWidth;
-            size.height = cardHeight;
-        }
+        deck = new Deck(this);
+        boardStacks = new StackBoard(deck, this, layout, 0, (int) (pxHeight + pxHeight / 2),
+                cardWidth, cardHeight, getResources().getIdentifier("empty2", "drawable", getPackageName()));
 
         deckStack = (ImageView) findViewById(R.id.deckView);
         size = (RelativeLayout.LayoutParams) deckStack.getLayoutParams();

@@ -10,15 +10,16 @@ public class Deck {
 	private LinkedList<Card> flipped;
 	
 	public Deck(Context context) {
-		deck = new LinkedList<Card>();
-		flipped = new LinkedList<Card>();
+		deck = new LinkedList<>();
+		flipped = new LinkedList<>();
 		Card c;
-        Drawable d;
+        int id;
+		int back = context.getResources().getIdentifier("back", "drawable", context.getPackageName());
 
 		for (Suit s : Suit.values()) {
 			for (int i = 1; i < 14; i++) {
-				d = context.getResources().getDrawable(context.getResources().getIdentifier("c" + i, "drawable", context.getPackageName()));
-				c = new Card(i, s, d);
+				id = context.getResources().getIdentifier("c" + i, "drawable", context.getPackageName());
+				c = new Card(i, s, id, back);
 				deck.add(c);
 			}
 		}

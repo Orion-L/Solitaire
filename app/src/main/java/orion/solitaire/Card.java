@@ -4,14 +4,16 @@ import android.graphics.drawable.Drawable;
 
 public class Card {
 	private int value;
+	private int imgId;
+    private int backId;
 	private Suit suit;
-    private Drawable d;
 	private boolean faceUp;
 	
-	public Card(int value, Suit suit, Drawable d) {
+	public Card(int value, Suit suit, int imgId, int backId) {
 		this.value = value;
 		this.suit = suit;
-        this.d = d;
+        this.imgId = imgId;
+        this.backId = backId;
 		faceUp = false;
 	}
 	
@@ -23,8 +25,12 @@ public class Card {
 		return suit;
 	}
 
-    public Drawable getImage() {
-        return d;
+    public int getImageId() {
+        if (faceUp) {
+            return imgId;
+        } else {
+            return backId;
+        }
     }
 	
 	public boolean getFace() {
