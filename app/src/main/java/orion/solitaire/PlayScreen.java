@@ -35,11 +35,11 @@ public class PlayScreen extends AppCompatActivity {
         int cardHeight = (int) pxHeight;
 
         goalStacks = new GoalStacks(this, layout, (int) (screenWidth - (numGoals * pxWidth + (numGoals - 1) * spacing)), 0,
-                cardWidth, cardHeight, getResources().getIdentifier("empty2", "drawable", getPackageName()));
+                cardWidth, cardHeight, getResources().getIdentifier("empty", "drawable", getPackageName()));
 
         deck = new Deck(this);
         boardStacks = new StackBoard(deck, this, layout, 0, (int) (pxHeight + pxHeight / 2),
-                cardWidth, cardHeight, getResources().getIdentifier("empty2", "drawable", getPackageName()));
+                cardWidth, cardHeight, getResources().getIdentifier("empty", "drawable", getPackageName()));
 
         deckStack = (ImageView) findViewById(R.id.deckView);
         size = (RelativeLayout.LayoutParams) deckStack.getLayoutParams();

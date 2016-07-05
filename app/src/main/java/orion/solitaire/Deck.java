@@ -17,7 +17,25 @@ public class Deck {
 
 		for (Suit s : Suit.values()) {
 			for (int i = 1; i < 14; i++) {
-				id = context.getResources().getIdentifier("c" + i, "drawable", context.getPackageName());
+                String image;
+				switch (s) {
+                    case SPADE:
+                        image = "s" + i;
+                        break;
+                    case HEART:
+                        image = "h" + i;
+                        break;
+                    case CLUB:
+                        image = "c" + i;
+                        break;
+                    case DIAMOND:
+                        image = "d" + i;
+                        break;
+                    default:
+                        image = "empty";
+                }
+
+                id = context.getResources().getIdentifier(image, "drawable", context.getPackageName());
 				c = new Card(i, s, id, back);
 				deck.add(c);
 			}
