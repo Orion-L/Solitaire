@@ -1,7 +1,7 @@
-package orion.solitaire;
+package PlayingCards;
 
 /**
- * Enumeration of card suits
+ * Enumeration of card suits.
  */
 public enum Suit {
 	SPADE, HEART, CLUB, DIAMOND

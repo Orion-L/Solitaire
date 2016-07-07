@@ -10,14 +10,4 @@
     tools:context="orion.solitaire.PlayScreen"
     android:background="@drawable/background"
     android:id="@+id/playLayout">
-
-    <ImageView
-        android:layout_width="40dp"
-        android:layout_height="57.8dp"
-        android:id="@+id/deckView"
-        android:src="@drawable/back"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
 </RelativeLayout>

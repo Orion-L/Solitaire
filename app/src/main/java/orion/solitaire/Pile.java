@@ -7,9 +7,8 @@ import android.widget.RelativeLayout;
 
 import java.util.LinkedList;
 
-/**
- * Represents a pile of Card objects
- */
+import PlayingCards.Card;
+
 public class Pile {
     private int xPos, yPos, width, height;
     private Context c;
@@ -18,16 +17,6 @@ public class Pile {
 	private LinkedList<Card> pile;
 	private LinkedList<ImageView> images;
 
-    /**
-     * Create a new Pile object
-     * @param c Activity being used in
-     * @param l Layout to add images to
-     * @param xPos X-Coordinate (in pixels, from left) of pile
-     * @param yPos Y-Coordinate (in pixels, from top) of pile
-     * @param width Width of each card in pile
-     * @param height Height of each card in pile
-     * @param baseId Image id of the empty card
-     */
 	public Pile(Context c, RelativeLayout l, int xPos, int yPos, int width, int height, int baseId) {
 		this.c = c;
         this.l = l;
@@ -51,15 +40,29 @@ public class Pile {
 
 	}
 
-    /**
-     * Add a card to the pile
-     * @param card Card to be added
-     */
 	public void addCard(Card card) {
 		pile.push(card);
 
         ImageView newImg = new ImageView(c);
-        newImg.setImageResource(card.getImageId());
+
+        if (card.isFaceUp()) {
+            switch (card.getSuit()) {
+                case SPADE:
+                    newImg.setImageResource(c.getResources().getIdentifier("s" + card.getValue(), "drawable", c.getPackageName()));
+                    break;
+                case HEART:
+                    newImg.setImageResource(c.getResources().getIdentifier("h" + card.getValue(), "drawable", c.getPackageName()));
+                    break;
+                case CLUB:
+                    newImg.setImageResource(c.getResources().getIdentifier("c" + card.getValue(), "drawable", c.getPackageName()));
+                    break;
+                case DIAMOND:
+                    newImg.setImageResource(c.getResources().getIdentifier("d" + card.getValue(), "drawable", c.getPackageName()));
+                    break;
+            }
+        } else {
+            newImg.setImageResource(R.drawable.back);
+        }
 
         lp = new RelativeLayout.LayoutParams(width, height);
         lp.setMargins(xPos, yPos + images.size() * (height / 5), 0, 0);
@@ -70,9 +73,6 @@ public class Pile {
         images.push(newImg);
 	}
 
-    /**
-     * Remove the top card from the pile
-     */
 	public void removeCard() {
 		pile.pop();
 
@@ -80,10 +80,6 @@ public class Pile {
         l.removeView(i);
 	}
 
-    /**
-     * Get the top card of the pile
-     * @return Returns the top card
-     */
 	public Card getTop() {
 		return pile.getFirst();
 	}
