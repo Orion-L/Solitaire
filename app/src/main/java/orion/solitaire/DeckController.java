@@ -1,6 +1,7 @@
 package orion.solitaire;
 
 import android.content.Context;
+import android.media.Image;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -11,20 +12,18 @@ import PlayingCards.Deck;
 public class DeckController {
     private static final int deckDrawMargin = 15;
 
-    private int width, height, baseId, backId;
+    private int baseId, backId;
+    private SolitaireGame s;
     private Context c;
-    private RelativeLayout l;
     private RelativeLayout.LayoutParams lp;
     private ImageView deckView;
     private ImageView[] drawView;
     private Deck d;
     private Deck drawn;
 
-    public DeckController(Context c, RelativeLayout l, int width, int height, int baseId, int backId) {
+    public DeckController(SolitaireGame s, Context c, RelativeLayout l, int width, int height, int baseId, int backId) {
+        this.s = s;
         this.c = c;
-        this.l = l;
-        this.width = width;
-        this.height = height;
         this.baseId = baseId;
         this.backId = backId;
 
@@ -72,14 +71,30 @@ public class DeckController {
         return null;
     }
 
+    public void reset() {
+        for (int i = 2; i >= 0; i--) {
+            if (drawView[i].getVisibility() == View.VISIBLE) {
+                drawView[i].setOnClickListener(null);
+                break;
+            }
+        }
+
+        flipDeck();
+        deckView.setImageResource(backId);
+        d.init();
+    }
+
     private void flipThree() {
+        for (int i = 2; i >= 0; i--) {
+            if (drawView[i].getVisibility() == View.VISIBLE) {
+                drawView[i].setOnClickListener(null);
+                break;
+            }
+        }
+
         if (d.getSize() == 0) {
             flipDeck();
             deckView.setImageResource(backId);
-
-            for (int i = 0; i < 3; i++) {
-                drawView[i].setVisibility(View.INVISIBLE);
-            }
         } else {
             Card card;
             int s = d.getSize();
@@ -107,8 +122,26 @@ public class DeckController {
                         id = c.getResources().getIdentifier("empty", "drawable", c.getPackageName());
                 }
 
-                drawView[i].setImageResource(id);
-                drawView[i].setVisibility(View.VISIBLE);
+                if (drawView[i].getVisibility() == View.INVISIBLE) {
+                    drawView[i].setImageResource(id);
+                    drawView[i].setVisibility(View.VISIBLE);
+                } else {
+                    int j;
+                    for (j = 1; j < 3 && drawView[j].getVisibility() != View.INVISIBLE; j++) {
+                        drawView[j - 1].setImageDrawable(drawView[j].getDrawable());
+                    }
+
+                    if (j == 3) j -= 1;
+                    drawView[j].setImageResource(id);
+                    drawView[j].setVisibility(View.VISIBLE);
+                }
+            }
+
+            for (int i = 2; i >= 0; i--) {
+                if (drawView[i].getVisibility() == View.VISIBLE) {
+                    addClickListener(i);
+                    break;
+                }
             }
 
             if (d.getSize() == 0) deckView.setImageResource(baseId);
@@ -123,6 +156,29 @@ public class DeckController {
             card = drawn.draw();
             card.setFaceUp(false);
             d.add(card);
+
+            if (i < 3) drawView[i].setVisibility(View.INVISIBLE);
         }
+    }
+
+    private void addClickListener(final int index) {
+        drawView[index].setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Card clicked = drawn.draw();
+                SolitaireGame s = DeckController.this.s;
+
+                if (s.addGoal(clicked) || s.addBoard(clicked)) {
+                    drawView[index].setOnClickListener(null);
+                    drawView[index].setVisibility(View.INVISIBLE);
+
+                    if (index > 0) {
+                        addClickListener(index - 1);
+                    }
+                } else {
+                    drawn.add(clicked);
+                }
+            }
+        });
     }
 }

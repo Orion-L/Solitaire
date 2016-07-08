@@ -10,4 +10,13 @@
     tools:context="orion.solitaire.PlayScreen"
     android:background="@drawable/background"
     android:id="@+id/playLayout">
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Reset"
+        android:id="@+id/btnReset"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:onClick="resetGame"/>
 </RelativeLayout>

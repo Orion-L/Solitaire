@@ -6,22 +6,17 @@ import android.widget.RelativeLayout;
 import PlayingCards.Card;
 
 public class BoardController {
+	public static final int NUM_BOARD_STACKS = 7;
+
 	private Pile[] stacks;
 
-	public BoardController(DeckController d, Context c, RelativeLayout l, int xPos, int yPos, int cardSpace, int width, int height, int baseId) {
-		stacks = new Pile[Constants.numBoardStacks];
+	public BoardController(SolitaireGame s, Context c, RelativeLayout l, int xPos, int yPos, int cardSpace, int width, int height, int baseId) {
+		stacks = new Pile[NUM_BOARD_STACKS];
         int x = xPos;
-		Card card;
 
 		for (int i = 0; i < stacks.length; i++) {
             if (i > 0) x += width + cardSpace;
 			stacks[i] = new Pile(c, l, x, yPos, width, height, baseId);
-
-			for (int j = 0; j <= i; j++) {
-                card = d.removeTop();
-                if (j == i) card.setFaceUp(true);
-				stacks[i].addCard(card);
-			}
 		}
 	}
 
@@ -36,4 +31,14 @@ public class BoardController {
 	public Card getTop(int index) {
 		return stacks[index].getTop();
 	}
+
+    public int getSize(int index) {
+        return stacks[index].getSize();
+    }
+
+    public void reset() {
+        for (Pile p : stacks) {
+            p.empty();
+        }
+    }
 }

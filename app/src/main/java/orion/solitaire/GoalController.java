@@ -6,15 +6,14 @@ import android.widget.RelativeLayout;
 import PlayingCards.Card;
 
 public class GoalController {
-	private int numCards;
-	private int width;
-    private int height;
+	public static final int NUM_GOALS = 4;
 
-    private Context c;
+	private static final int NUM_CARDS = 52;
+	private int numCards;
     private Pile[] stacks;
 
-	public GoalController(Context c, RelativeLayout l, int xPos, int yPos, int cardSpace, int width, int height, int baseId) {
-		stacks = new Pile[Constants.numGoals];
+	public GoalController(SolitaireGame s, Context c, RelativeLayout l, int xPos, int yPos, int cardSpace, int width, int height, int baseId) {
+		stacks = new Pile[NUM_GOALS];
 		numCards = 0;
 		int x = xPos;
 
@@ -38,7 +37,19 @@ public class GoalController {
 		return stacks[index].getTop();
 	}
 
+    public int getSize(int index) {
+        return stacks[index].getSize();
+    }
+
 	public boolean hasWon() {
-		return (numCards == Constants.numCards);
+		return (numCards == NUM_CARDS);
 	}
+
+    public void reset() {
+        numCards = 0;
+
+        for (Pile p : stacks) {
+            p.empty();
+        }
+    }
 }

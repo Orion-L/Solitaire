@@ -41,8 +41,6 @@ public class Pile {
 	}
 
 	public void addCard(Card card) {
-		pile.push(card);
-
         ImageView newImg = new ImageView(c);
 
         if (card.isFaceUp()) {
@@ -64,14 +62,33 @@ public class Pile {
             newImg.setImageResource(R.drawable.back);
         }
 
+        int cardMargin;
+
+        if (pile.size() > 0 && pile.getFirst().isFaceUp()) {
+            cardMargin = (height / 3 + height / 12);
+        } else {
+            cardMargin = height / 5;
+        }
+
+        int yCoord;
+
+        if (images.size() > 0) {
+            lp = (RelativeLayout.LayoutParams) images.getFirst().getLayoutParams();
+            yCoord = lp.topMargin + cardMargin;
+        } else {
+            yCoord = yPos;
+        }
+
         lp = new RelativeLayout.LayoutParams(width, height);
-        lp.setMargins(xPos, yPos + images.size() * (height / 5), 0, 0);
+        lp.setMargins(xPos, yCoord, 0, 0);
         newImg.setLayoutParams(lp);
 
         l.addView(newImg);
 
         images.push(newImg);
-	}
+        pile.push(card);
+
+    }
 
 	public void removeCard() {
 		pile.pop();
@@ -83,4 +100,15 @@ public class Pile {
 	public Card getTop() {
 		return pile.getFirst();
 	}
+
+    public int getSize() {
+        return pile.size();
+    }
+
+    public void empty() {
+        for (ImageView i : images) l.removeView(i);
+
+        pile.clear();
+        images.clear();
+    }
 }
