@@ -16,7 +16,7 @@ public class BoardController {
 
 		for (int i = 0; i < stacks.length; i++) {
             if (i > 0) x += width + cardSpace;
-			stacks[i] = new Pile(c, l, x, yPos, width, height, baseId);
+			stacks[i] = new Pile(s, c, l, PileType.BOARD, x, yPos, width, height, baseId);
 		}
 	}
 

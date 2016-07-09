@@ -10,20 +10,25 @@ import java.util.LinkedList;
 import PlayingCards.Card;
 
 public class Pile {
-    private int xPos, yPos, width, height;
+    private int xPos, yPos, width, height, baseId;
+    private SolitaireGame s;
     private Context c;
     private RelativeLayout l;
     private RelativeLayout.LayoutParams lp;
+    private PileType type;
 	private LinkedList<Card> pile;
 	private LinkedList<ImageView> images;
 
-	public Pile(Context c, RelativeLayout l, int xPos, int yPos, int width, int height, int baseId) {
-		this.c = c;
+	public Pile(SolitaireGame s, Context c, RelativeLayout l, PileType type, int xPos, int yPos, int width, int height, int baseId) {
+		this.s = s;
+        this.c = c;
         this.l = l;
+        this.type = type;
         this.xPos = xPos;
         this.yPos = yPos;
         this.width = width;
         this.height = height;
+        this.baseId = baseId;
 
         pile = new LinkedList<>();
         images = new LinkedList<>();
@@ -41,9 +46,46 @@ public class Pile {
 	}
 
 	public void addCard(Card card) {
-        ImageView newImg = new ImageView(c);
+        int yCoord;
+        ImageView newImg;
 
-        if (card.isFaceUp()) {
+        if (type == PileType.BOARD) {
+            newImg = new ImageView(c);
+            int cardMargin;
+
+            if (pile.size() > 0 && pile.getFirst().isFaceUp()) {
+                cardMargin = (height / 3 + height / 12);
+            } else {
+                cardMargin = height / 5;
+            }
+
+            if (images.size() > 0) {
+                lp = (RelativeLayout.LayoutParams) images.getFirst().getLayoutParams();
+                yCoord = lp.topMargin + cardMargin;
+            } else {
+                yCoord = yPos;
+            }
+
+            l.addView(newImg);
+            images.push(newImg);
+
+            if (card.isFaceUp()) addBoardClick(card);
+        } else if (type == PileType.GOAL) {
+            yCoord = yPos;
+
+            if (images.size() > 0) {
+                newImg = images.getFirst();
+            } else {
+                newImg = new ImageView(c);
+                images.add(newImg);
+                l.addView(newImg);
+                addGoalClick();
+            }
+        } else {
+            return;
+        }
+
+        if (card.isFaceUp() || type == PileType.GOAL) {
             switch (card.getSuit()) {
                 case SPADE:
                     newImg.setImageResource(c.getResources().getIdentifier("s" + card.getValue(), "drawable", c.getPackageName()));
@@ -62,39 +104,42 @@ public class Pile {
             newImg.setImageResource(R.drawable.back);
         }
 
-        int cardMargin;
-
-        if (pile.size() > 0 && pile.getFirst().isFaceUp()) {
-            cardMargin = (height / 3 + height / 12);
-        } else {
-            cardMargin = height / 5;
-        }
-
-        int yCoord;
-
-        if (images.size() > 0) {
-            lp = (RelativeLayout.LayoutParams) images.getFirst().getLayoutParams();
-            yCoord = lp.topMargin + cardMargin;
-        } else {
-            yCoord = yPos;
-        }
-
         lp = new RelativeLayout.LayoutParams(width, height);
         lp.setMargins(xPos, yCoord, 0, 0);
         newImg.setLayoutParams(lp);
 
-        l.addView(newImg);
-
-        images.push(newImg);
         pile.push(card);
-
     }
 
 	public void removeCard() {
-		pile.pop();
+        pile.pop();
+        ImageView i = images.getFirst();
 
-        ImageView i = images.pop();
-        l.removeView(i);
+        if (type == PileType.BOARD) {
+            images.pop();
+            l.removeView(i);
+        } else if (type == PileType.GOAL) {
+            if (pile.size() > 0) {
+                Card card = pile.getFirst();
+                switch (card.getSuit()) {
+                    case SPADE:
+                        i.setImageResource(c.getResources().getIdentifier("s" + card.getValue(), "drawable", c.getPackageName()));
+                        break;
+                    case HEART:
+                        i.setImageResource(c.getResources().getIdentifier("h" + card.getValue(), "drawable", c.getPackageName()));
+                        break;
+                    case CLUB:
+                        i.setImageResource(c.getResources().getIdentifier("c" + card.getValue(), "drawable", c.getPackageName()));
+                        break;
+                    case DIAMOND:
+                        i.setImageResource(c.getResources().getIdentifier("d" + card.getValue(), "drawable", c.getPackageName()));
+                        break;
+                }
+            } else {
+                images.pop();
+                l.removeView(i);
+            }
+        }
 	}
 
 	public Card getTop() {
@@ -110,5 +155,73 @@ public class Pile {
 
         pile.clear();
         images.clear();
+    }
+
+    private void addBoardClick(final Card clicked) {
+        ImageView img = images.getFirst();
+        img.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (clicked.equals(pile.getFirst())) {
+                    if (s.addGoal(clicked) || s.addBoard(clicked)) {
+                        removeCard();
+
+                        if (pile.size() > 0 && !pile.getFirst().isFaceUp()) flipView();
+                    }
+                } else {
+                    LinkedList<Card> cardStack = new LinkedList<>();
+                    int index = pile.indexOf(clicked);
+
+                    for (int i = 0; i <= index; i++) {
+                        cardStack.push(pile.get(i));
+                    }
+
+                    if (s.addBoardStack(cardStack)) {
+                        for (int i = 0; i <= index; i++) {
+                            removeCard();
+                        }
+
+                        if (pile.size() > 0 && !pile.getFirst().isFaceUp()) flipView();
+                    }
+                }
+            }
+        });
+    }
+
+    private void addGoalClick() {
+        ImageView img = images.getFirst();
+        img.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Card clicked = pile.getFirst();
+                if (s.addBoard(clicked)) {
+                    removeCard();
+                }
+            }
+        });
+    }
+
+    private void flipView() {
+        Card card = pile.getFirst();
+        card.setFaceUp(true);
+
+        ImageView i = images.getFirst();
+
+        switch (card.getSuit()) {
+            case SPADE:
+                i.setImageResource(c.getResources().getIdentifier("s" + card.getValue(), "drawable", c.getPackageName()));
+                break;
+            case HEART:
+                i.setImageResource(c.getResources().getIdentifier("h" + card.getValue(), "drawable", c.getPackageName()));
+                break;
+            case CLUB:
+                i.setImageResource(c.getResources().getIdentifier("c" + card.getValue(), "drawable", c.getPackageName()));
+                break;
+            case DIAMOND:
+                i.setImageResource(c.getResources().getIdentifier("d" + card.getValue(), "drawable", c.getPackageName()));
+                break;
+        }
+
+        addBoardClick(card);
     }
 }

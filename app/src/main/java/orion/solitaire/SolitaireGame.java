@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.widget.RelativeLayout;
 
+import java.util.LinkedList;
+
 import PlayingCards.Card;
 import PlayingCards.Suit;
 
@@ -59,6 +61,46 @@ public class SolitaireGame {
     }
 
     public boolean addGoal(Card card) {
+        int i = checkGoal(card);
+
+        if (i >= 0) {
+            goalC.addCard(card, i);
+            return true;
+        }
+
+        return false;
+    }
+
+    public boolean addBoard(Card card) {
+        int i = checkBoard(card);
+
+        if (i >= 0) {
+            boardC.addCard(card, i);
+            return true;
+        }
+
+        return false;
+    }
+
+    public boolean addBoardStack(LinkedList<Card> cardStack) {
+        Card card = cardStack.pop();
+        int i = checkBoard(card);
+
+        if (i >= 0) {
+            boardC.addCard(card, i);
+
+            while (cardStack.size() > 0) {
+                card = cardStack.pop();
+                boardC.addCard(card, i);
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    private int checkGoal(Card card) {
         Card top;
 
         for (int i = 0; i < GoalController.NUM_GOALS; i++) {
@@ -66,19 +108,17 @@ public class SolitaireGame {
                 top = goalC.getTop(i);
 
                 if (top.getSuit() == card.getSuit() && top.getValue() == card.getValue() - 1) {
-                    goalC.addCard(card, i);
-                    return true;
+                    return i;
                 }
             } else if (card.getValue() == 1) {
-                goalC.addCard(card, i);
-                return true;
+                return i;
             }
         }
 
-        return false;
+        return -1;
     }
 
-    public boolean addBoard(Card card) {
+    private int checkBoard(Card card) {
         Card top;
 
         for (int i = 0; i < BoardController.NUM_BOARD_STACKS; i++) {
@@ -90,28 +130,25 @@ public class SolitaireGame {
                         case SPADE:
                         case CLUB:
                             if (card.getSuit() == Suit.HEART || card.getSuit() == Suit.DIAMOND) {
-                                boardC.addCard(card, i);
-                                return true;
+                                return i;
                             }
 
                             break;
                         case HEART:
                         case DIAMOND:
                             if (card.getSuit() == Suit.SPADE || card.getSuit() == Suit.CLUB) {
-                                boardC.addCard(card, i);
-                                return true;
+                                return i;
                             }
 
                             break;
                     }
                 }
             } else if (card.getValue() == 13) {
-                goalC.addCard(card, i);
-                return true;
+                return i;
             }
         }
 
-        return false;
+        return -1;
     }
 
     private void initialiseBoard() {

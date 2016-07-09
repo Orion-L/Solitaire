@@ -1,10 +1,13 @@
 package orion.solitaire;
 
 import android.content.Context;
+import android.content.Intent;
 import android.media.Image;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+
+import java.util.LinkedList;
 
 import PlayingCards.Card;
 import PlayingCards.Deck;
@@ -20,12 +23,14 @@ public class DeckController {
     private ImageView[] drawView;
     private Deck d;
     private Deck drawn;
+    private LinkedList<Integer> drawnId;
 
     public DeckController(SolitaireGame s, Context c, RelativeLayout l, int width, int height, int baseId, int backId) {
         this.s = s;
         this.c = c;
         this.baseId = baseId;
         this.backId = backId;
+        this.drawnId = new LinkedList<>();
 
         d = new Deck();
         drawn = new Deck();
@@ -122,6 +127,8 @@ public class DeckController {
                         id = c.getResources().getIdentifier("empty", "drawable", c.getPackageName());
                 }
 
+                drawnId.push(id);
+
                 if (drawView[i].getVisibility() == View.INVISIBLE) {
                     drawView[i].setImageResource(id);
                     drawView[i].setVisibility(View.VISIBLE);
@@ -169,11 +176,22 @@ public class DeckController {
                 SolitaireGame s = DeckController.this.s;
 
                 if (s.addGoal(clicked) || s.addBoard(clicked)) {
-                    drawView[index].setOnClickListener(null);
-                    drawView[index].setVisibility(View.INVISIBLE);
+                    drawnId.pop();
 
-                    if (index > 0) {
-                        addClickListener(index - 1);
+                    if (drawn.getSize() < 3) {
+                        drawView[index].setOnClickListener(null);
+                        drawView[index].setVisibility(View.INVISIBLE);
+
+                        if (index > 0) {
+                            addClickListener(index - 1);
+                        }
+                    } else {
+                        int j;
+                        for (j = 2; j > 0 && drawView[j].getVisibility() != View.INVISIBLE; j--) {
+                            drawView[j].setImageDrawable(drawView[j - 1].getDrawable());
+                        }
+
+                        drawView[j].setImageResource(drawnId.get(2));
                     }
                 } else {
                     drawn.add(clicked);

@@ -50,4 +50,32 @@ public class Card {
 	public void setFaceUp(boolean b) {
 		faceUp = b;
 	}
+
+	@Override
+    public boolean equals(Object o) {
+        if (o instanceof Card) {
+            Card c = (Card) o;
+            return (c.getValue() == value && c.getSuit() == suit);
+        }
+
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int code = value;
+
+        switch (suit) {
+            case SPADE:
+                code += 13;
+                break;
+            case HEART:
+                code += 26;
+                break;
+            case CLUB:
+                code += 39;
+        }
+
+        return code;
+    }
 }
