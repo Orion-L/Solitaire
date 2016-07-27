@@ -56,4 +56,17 @@ public class Deck {
     public int getSize() {
         return deck.size();
     }
+
+    @Override
+    public Object clone() {
+        Card temp;
+        Deck newDeck = new Deck();
+
+        for (Card c : deck) {
+            temp = new Card(c.getValue(), c.getSuit());
+            newDeck.add(temp);
+        }
+
+        return newDeck;
+    }
 }

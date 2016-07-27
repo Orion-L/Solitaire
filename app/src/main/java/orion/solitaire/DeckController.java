@@ -22,6 +22,7 @@ public class DeckController {
     private ImageView deckView;
     private ImageView[] drawView;
     private Deck d;
+    private Deck original;
     private Deck drawn;
     private LinkedList<Integer> drawnId;
 
@@ -36,6 +37,8 @@ public class DeckController {
         drawn = new Deck();
 
         d.init();
+
+        original = (Deck) d.clone();
 
         deckView = new ImageView(c);
         deckView.setImageResource(backId);
@@ -76,7 +79,7 @@ public class DeckController {
         return null;
     }
 
-    public void reset() {
+    public void newGame() {
         for (int i = 2; i >= 0; i--) {
             if (drawView[i].getVisibility() == View.VISIBLE) {
                 drawView[i].setOnClickListener(null);
@@ -87,6 +90,20 @@ public class DeckController {
         flipDeck();
         deckView.setImageResource(backId);
         d.init();
+        original = (Deck) d.clone();
+    }
+
+    public void reset() {
+        for (int i = 2; i >= 0; i--) {
+            if (drawView[i].getVisibility() == View.VISIBLE) {
+                drawView[i].setOnClickListener(null);
+                break;
+            }
+        }
+
+        flipDeck();
+        deckView.setImageResource(backId);
+        d = (Deck) original.clone();
     }
 
     private void flipThree() {

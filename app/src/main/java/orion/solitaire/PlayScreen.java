@@ -19,6 +19,10 @@ public class PlayScreen extends AppCompatActivity {
         s = new SolitaireGame(this, layout);
     }
 
+    public void newGame(View v) {
+        s.newGame();
+    }
+
     public void resetGame(View v) {
         s.reset();
     }

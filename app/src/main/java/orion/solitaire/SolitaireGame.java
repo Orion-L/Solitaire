@@ -52,10 +52,18 @@ public class SolitaireGame {
         initialiseBoard();
     }
 
+    public void newGame() {
+        deckC.newGame();
+        boardC.clear();
+        goalC.clear();
+
+        initialiseBoard();
+    }
+
     public void reset() {
         deckC.reset();
-        boardC.reset();
-        goalC.reset();
+        boardC.clear();
+        goalC.clear();
 
         initialiseBoard();
     }

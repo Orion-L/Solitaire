@@ -36,7 +36,7 @@ public class BoardController {
         return stacks[index].getSize();
     }
 
-    public void reset() {
+    public void clear() {
         for (Pile p : stacks) {
             p.empty();
         }

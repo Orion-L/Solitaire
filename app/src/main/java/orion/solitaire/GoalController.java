@@ -45,7 +45,7 @@ public class GoalController {
 		return (numCards == NUM_CARDS);
 	}
 
-    public void reset() {
+    public void clear() {
         numCards = 0;
 
         for (Pile p : stacks) {
