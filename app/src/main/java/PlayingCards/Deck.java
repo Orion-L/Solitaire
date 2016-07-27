@@ -57,8 +57,7 @@ public class Deck {
         return deck.size();
     }
 
-    @Override
-    public Object clone() {
+    public Deck copy() {
         Card temp;
         Deck newDeck = new Deck();
 

@@ -38,7 +38,7 @@ public class DeckController {
 
         d.init();
 
-        original = (Deck) d.clone();
+        original = d.copy();
 
         deckView = new ImageView(c);
         deckView.setImageResource(backId);
@@ -90,7 +90,7 @@ public class DeckController {
         flipDeck();
         deckView.setImageResource(backId);
         d.init();
-        original = (Deck) d.clone();
+        original = d.copy();
     }
 
     public void reset() {
@@ -103,7 +103,7 @@ public class DeckController {
 
         flipDeck();
         deckView.setImageResource(backId);
-        d = (Deck) original.clone();
+        d = original.copy();
     }
 
     private void flipThree() {
